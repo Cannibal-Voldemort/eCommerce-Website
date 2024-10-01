@@ -18,7 +18,6 @@ function AuthSignup() {
 
   function onSubmit(event) {
     event.preventDefault();
-    console.log("Form Data:", formData); 
     dispatch(registerUser(formData)).then((data) => {
       if(data?.payload?.success) navigate("/auth/login")
     });
