@@ -1,4 +1,4 @@
 function NotFound() {
-  return <div> aukat sai bahar mat ja</div>;
+  return <div>Mai hokar bhi nahi hun </div>;
 }
 export default NotFound;
