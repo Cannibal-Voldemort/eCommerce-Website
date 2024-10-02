@@ -2,22 +2,22 @@ const express = require("express");
 const {
   registerUser,
   loginUser,
-  logOut,
+  logOutUser,
   authMiddleware,
 } = require("../../controllers/auth/auth-controller");
-const { tryCatchSimple } = require("../../utilities/errorhandling");
+const { tryCatchSimple, tryCatchWithNext } = require("../../utilities/errorhandling");
 const router = express.Router();
 
 router.post("/signup", tryCatchSimple(registerUser));
 router.post("/login", tryCatchSimple(loginUser));
-router.post('/logout', logOut)
-router.get('/check-auth', authMiddleware, (req, res) =>{
-  const user = user
+router.post("/logout", logOutUser);
+router.get("/check-auth",tryCatchWithNext(authMiddleware), (req, res) => {
+  const user = req.user;
   res.status(200).json({
     success: true,
-    message: 'Authenticated user!',
+    message: "Authenticated user!",
     user,
-  })
-})
+  });
+});
 
 module.exports = router;

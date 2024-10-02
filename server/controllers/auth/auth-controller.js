@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/user");
-const {tryCatchWithNext} = require("../../utilities/errorhandling")
+
 
 const registerUser = async (req, res) => {
   const { userName, email, password } = req.body;
@@ -43,13 +43,11 @@ const loginUser = async (req, res) => {
       message: "Invalid password! Please try again",
     });
 
-  const token = jwt.sign(
-    {
+  const token = jwt.sign({
       id: checkUser._id,
       role: checkUser.role,
       email: checkUser.email,
-    },
-    "aman_key",
+    },'client_secret_key',
     { expiresIn: "60m" }
   );
 
@@ -64,14 +62,14 @@ const loginUser = async (req, res) => {
   });
 };
 
-const logOut = (req, res) => {
+const logOutUser = (req, res) => {
   res.clearCookie("token").json({
     success: true,
     message: "Logged out successfully",
   });
 };
 
-const authMiddleware = tryCatchWithNext(async (req, res, next) => {
+const authMiddleware =async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
     return res.status(401).json({
@@ -79,14 +77,14 @@ const authMiddleware = tryCatchWithNext(async (req, res, next) => {
       message: "Unauthorisd User",
     });
   }
-  const decoded = jwt.verify(token, amam_key);
+  const decoded = jwt.verify(token, 'client_secret_key');
   req.user = decoded;
   next();
-});
+};
 
 module.exports = {
   registerUser,
   loginUser,
-  logOut,
+  logOutUser,
   authMiddleware
 };
