@@ -53,7 +53,7 @@ if(isLoading) return <div>Loading...</div>
         >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="orders" element={<AdminOrders />} />
-          <Route path="product" element={<AdminProduct />} />
+          <Route path="products" element={<AdminProduct />} />
           <Route path="features" element={<AdminFeatures />} />
         </Route>
         <Route
