@@ -13,21 +13,22 @@ import Account from "./pages/shopping-view/accout";
 import Checkout from "./pages/shopping-view/checkout";
 import ShoppingHome from "./pages/shopping-view/home";
 import ItemsListing from "./pages/shopping-view/items";
-
 import CheckAuth from "./components/common/check-auth";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth } from "./store/auth-slice";
 
 function App() {
-  const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
-  const dispatch = useDispatch()
+  const { user, isAuthenticated, isLoading } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
 
-  useEffect(()=>{
-    dispatch(checkAuth())
-  }, [dispatch])
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
 
-if(isLoading) return <div>Loading...</div>
+  if (isLoading) return <div>Loading...</div>;
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>

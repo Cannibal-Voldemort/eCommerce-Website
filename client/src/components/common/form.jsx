@@ -1,8 +1,13 @@
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Select, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
-import { SelectContent } from "@radix-ui/react-select";
 import { Button } from "../ui/button";
 
 function CommonForm({
@@ -16,12 +21,12 @@ function CommonForm({
     const value = formData[controlItem.name] || "";
     let element = null;
 
-    switch (controlItem.type) {
+    switch (controlItem.componentType) {
       case "input":
         element = (
           <Input
-            name={controlItem.placeholder}
-            id={controlItem.id}
+            name={controlItem.name}
+            id={controlItem.name}
             type={controlItem.type}
             value={value}
             onChange={(event) =>
@@ -43,16 +48,14 @@ function CommonForm({
             value={value}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={controlItem.placeholder} />
+              <SelectValue placeholder={controlItem.label} />
             </SelectTrigger>
             <SelectContent>
-              {controlItem.options && controlItem.options.length > 0
-                ? controlItem.options.map((optionItem) => (
-                    <SelectItem key={optionItem.id} value={optionItem.id}>
-                      {optionItem.label}
-                    </SelectItem>
-                  ))
-                : null}
+              {controlItem.options.map((optionItem) => (
+                <SelectItem key={optionItem.id} value={optionItem.id}>
+                  {optionItem.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         );
@@ -63,7 +66,7 @@ function CommonForm({
           <Textarea
             name={controlItem.name}
             placeholder={controlItem.placeholder}
-            id={controlItem.id}
+            id={controlItem.name}
             value={value}
             onChange={(event) =>
               setFormData({
@@ -76,25 +79,9 @@ function CommonForm({
         break;
 
       default:
-        element = (
-          <Input
-            name={controlItem.name}
-            placeholder={controlItem.placeholder}
-            id={controlItem.name}
-            type={controlItem.type} 
-            value={value}
-            onChange={(event) =>
-              setFormData({
-                ...formData,
-                [controlItem.name]: event.target.value,
-              })
-            }
-          />
-        );
         break;
     }
-    
-    return element; 
+    return element;
   }
 
   return (
@@ -116,4 +103,3 @@ function CommonForm({
 }
 
 export default CommonForm;
-
