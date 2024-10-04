@@ -79,6 +79,21 @@ function CommonForm({
         break;
 
       default:
+        element = (
+          <Input
+            name={controlItem.name}
+            placeholder={controlItem.placeholder}
+            id={controlItem.name}
+            type={controlItem.type}
+            value={value}
+            onChange={(event) =>
+              setFormData({
+                ...formData,
+                [controlItem.name]: event.target.value,
+              })
+            }
+          />
+        );
         break;
     }
     return element;
