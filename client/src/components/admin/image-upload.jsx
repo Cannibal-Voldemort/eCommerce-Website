@@ -1,13 +1,14 @@
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
+import axios from "axios";
 
 function ProductImageUpload({
   imageFile,
   setImageFile,
-  setImageUrl,
+  uploadedImageUrl,
   setUploadedImageUrl,
 }) {
   const inputRef = useRef(null);
@@ -26,13 +27,28 @@ function ProductImageUpload({
     if (droppedFile) setImageFile(droppedFile);
   }
 
-  function handleRemoveImage(){
-    setImageFile(null)
-    if(inputRef.current){
-        inputRef.current.value = ''
+  function handleRemoveImage() {
+    setImageFile(null);
+    if (inputRef.current) {
+      inputRef.current.value = "";
     }
   }
-  
+  async function uploadImageToCloudinary() {
+    const data = new FormData();
+    data.append("my_file", imageFile);
+    const response = await axios.post(
+      "http://localhost:4000/api/admin/products/upload-image",
+      data
+    );
+
+    if (response?.data?.success) {
+      setUploadedImageUrl(response.data.result.url);;
+    }
+  }
+
+  useEffect(() => {
+    if (imageFile !== null) uploadImageToCloudinary();
+  }, [imageFile]);
 
   return (
     <div className="w-full max-w-md mx-auto mt-4">
@@ -65,9 +81,14 @@ function ProductImageUpload({
               <FileIcon className="w-8 text-primary mr-2h-8"></FileIcon>
             </div>
             <p className=" text-sm font-medium">{imageFile.name}</p>
-            <Button variant = 'ghost' size='icon' className='text-muted-foreground hover:text-foreground' onClick={handleRemoveImage}>
-                <XIcon className="w-4 h-4"/>
-                <span className="sr-only">RemoveFile</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={handleRemoveImage}
+            >
+              <XIcon className="w-4 h-4" />
+              <span className="sr-only">RemoveFile</span>
             </Button>
           </div>
         )}

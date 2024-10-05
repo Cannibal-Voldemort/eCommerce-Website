@@ -3,13 +3,14 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { connectMongoDb } = require("./connection");
 const authRouter = require("./routes/auth/auth-route");
+const adminProductsRouter = require('./routes/admin/products-routes')
 
 connectMongoDb(
   "mongodb+srv://amanSingh17:Aman%402024@cluster0.xdaj3.mongodb.net/"
 ).then(() => console.log("MongoDB Connected"));
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 
 app.use(
   cors({
@@ -29,5 +30,6 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRouter);
+app.use("/api/admin/products", adminProductsRouter)
 
 app.listen(PORT, () => console.log(`Server started at PORT:${PORT}`));
