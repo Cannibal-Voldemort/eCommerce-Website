@@ -12,6 +12,7 @@ import ProductImageUpload from "@/components/admin/image-upload";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewProduct, fetchAllProducts } from "@/store/products-slice";
 import { useToast } from "@/hooks/use-toast";
+import AdminProductTile from "@/components/admin/product-tile";
 
 const initialFormData = {
   image: null,
@@ -29,36 +30,37 @@ function AdminProduct() {
   const [formData, setFormData] = useState(initialFormData);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const[imageLoadingState, setImageLoadingState] = useState(false)
-  const {productList} = useSelector(state=>state.adminProducts)  
-  const dispatch = useDispatch()
-  const {toast} = useToast()
-
+  const [imageLoadingState, setImageLoadingState] = useState(false);
+  const [currentEditedId, setCurrentEditedId] = useState(false);
+  const { productList } = useSelector((state) => state.adminProducts);
+  const dispatch = useDispatch();
+  const { toast } = useToast();
 
   function onSubmit(event) {
     event.preventDefault();
-    dispatch(addNewProduct ({
-      ...formData,
-      image: uploadedImageUrl,
-    })).then((data)=>{
+    dispatch(
+      addNewProduct({
+        ...formData,
+        image: uploadedImageUrl,
+      })
+    ).then((data) => {
       console.log(data);
-      if(data?.payload?.success){
-        dispatch(fetchAllProducts())
-        setOpenCreateProductDialog(false)
-        setImageFile(null)
-        setFormData(initialFormData)
+      if (data?.payload?.success) {
+        dispatch(fetchAllProducts());
+        setOpenCreateProductDialog(false);
+        setImageFile(null);
+        setFormData(initialFormData);
         toast({
-          title: 'Product added successfully'
-        })
+          title: "Product added successfully",
+        });
       }
-      
-    })
+    });
   }
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchAllProducts());
-  },[dispatch])
+  }, [dispatch]);
 
-  console.log(productList, uploadedImageUrl, 'productList')
+  // console.log(productList, uploadedImageUrl, "productList");
 
   return (
     <Fragment>
@@ -67,10 +69,25 @@ function AdminProduct() {
           Add New Product
         </Button>
       </div>
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {productList && productList.length > 0
+          ? productList.map((productItem) => (
+              <AdminProductTile
+                setFormData={setFormData}
+                setOpenCreateProductDialog={setOpenCreateProductDialog}
+                setCurrentEditedId={setCurrentEditedId}
+                product={productItem}
+              />
+            ))
+          : null}
+      </div>
 
       <Sheet
         open={openCreateProductDialog}
-        onOpenChange={() => setOpenCreateProductDialog(false)}
+        onOpenChange={() => {setOpenCreateProductDialog(false);
+          setCurrentEditedId(null);
+          setFormData(initialFormData);
+        }}
       >
         <SheetContent side="right" className="overflow-auto">
           <SheetHeader>
@@ -87,6 +104,7 @@ function AdminProduct() {
             setUploadedImageUrl={setUploadedImageUrl}
             setImageLoadingState={setImageLoadingState}
             imageLoadingState={imageLoadingState}
+            isEditMode={currentEditedId !== null}
           />
           <div className="py-6">
             <CommonForm
