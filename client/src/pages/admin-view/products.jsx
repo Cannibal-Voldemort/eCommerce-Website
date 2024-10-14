@@ -10,7 +10,7 @@ import CommonForm from "@/components/common/form";
 import { addProductFormElements } from "@/config";
 import ProductImageUpload from "@/components/admin/image-upload";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewProduct, fetchAllProducts } from "@/store/products-slice";
+import { addNewProduct, editProduct, fetchAllProducts } from "@/store/products-slice";
 import { useToast } from "@/hooks/use-toast";
 import AdminProductTile from "@/components/admin/product-tile";
 
@@ -38,7 +38,20 @@ function AdminProduct() {
 
   function onSubmit(event) {
     event.preventDefault();
-    dispatch(
+
+    currentEditedId !==null ?
+    dispatch(editProduct({id: currentEditedId, formData})).then((data) =>{
+      console.log(data, "edit")
+
+      if(data?payload?success){
+        dispatch(fetchAllProducts())
+        setFormData(initialFormData)
+        setOpenCreateProductDialog(false)
+        setCurrentEditedId(null)
+      }
+    })
+
+    : dispatch(
       addNewProduct({
         ...formData,
         image: uploadedImageUrl,
@@ -91,7 +104,11 @@ function AdminProduct() {
       >
         <SheetContent side="right" className="overflow-auto">
           <SheetHeader>
-            <SheetTitle>Add New Product</SheetTitle>
+            <SheetTitle>
+              {
+               currentEditedId !==null ? "Edit Product " : 'Add new Product'
+              }
+              </SheetTitle>
             <p className="text-sm text-gray-500" id="dialog-description">
               Please fill out the form below to add a new product to the
               inventory.
@@ -111,7 +128,7 @@ function AdminProduct() {
               onSubmit={onSubmit}
               formData={formData}
               setFormData={setFormData}
-              buttonText="Add"
+              buttonText={currentEditedId!==null ? 'Edit' : "Add"}
               formControls={addProductFormElements}
             />
           </div>
