@@ -68,9 +68,9 @@ const editProduct = async (req, res) => {
     salePrice,
     totalStock,
   } = req.body;
-  const findProduct = await Product.findById(id);
-  if (!findProduct) return
-    res.status(404).json({
+  let findProduct = await Product.findById(id);
+  if (!findProduct)
+    return res.status(404).json({
       success: false,
       message: "Product not found",
     });
@@ -78,37 +78,39 @@ const editProduct = async (req, res) => {
   findProduct.description = description || findProduct.description;
   findProduct.category = category || findProduct.category;
   findProduct.brand = brand || findProduct.brand;
-  findProduct.price = price || findProduct.price;
-  findProduct.salePrice = salePrice || findProduct.salePrice;
+  findProduct.price = price === 0 ? "" : price || findProduct.price;
+  findProduct.salePrice =
+    salePrice === 0 ? "" : salePrice || findProduct.salePrice;
   findProduct.totalStock = totalStock || findProduct.totalStock;
-  findProduct.image = image || findProduct.image
-  await findProduct.save()
+  findProduct.image = image || findProduct.image;
+  await findProduct.save();
   res.status(200).json({
     success: true,
     data: findProduct,
-  })
+  });
 };
 
 //removing Product
 
-const deleteProduct = async(req, res) =>{
-  const {id} = req.params
-  const product = await Product.findByIdAndDelete(id)
+const deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findByIdAndDelete(id);
 
-  if(!product) return res.status(404).json({
-    success: false,
-    message: 'Product not found'
-  })
+  if (!product)
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
+    });
   res.status(200).json({
     success: true,
-    message: 'Product deleted Successfully'
-  })
-}
+    message: "Product deleted Successfully",
+  });
+};
 
 module.exports = {
   handleImageUpload: tryCatchSimple(handleImageUpload),
   addProduct: tryCatchSimple(addProduct),
   fetchAllProducts: tryCatchSimple(fetchAllProducts),
   editProduct: tryCatchSimple(editProduct),
-  deleteProduct: tryCatchSimple(deleteProduct)
+  deleteProduct: tryCatchSimple(deleteProduct),
 };

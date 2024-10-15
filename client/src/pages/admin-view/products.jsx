@@ -10,7 +10,12 @@ import CommonForm from "@/components/common/form";
 import { addProductFormElements } from "@/config";
 import ProductImageUpload from "@/components/admin/image-upload";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewProduct, editProduct, fetchAllProducts } from "@/store/products-slice";
+import {
+  addNewProduct,
+  deleteProduct,
+  editProduct,
+  fetchAllProducts,
+} from "@/store/products-slice";
 import { useToast } from "@/hooks/use-toast";
 import AdminProductTile from "@/components/admin/product-tile";
 
@@ -39,41 +44,55 @@ function AdminProduct() {
   function onSubmit(event) {
     event.preventDefault();
 
-    currentEditedId !==null ?
-    dispatch(editProduct({id: currentEditedId, formData})).then((data) =>{
-      console.log(data, "edit")
+    currentEditedId !== null
+      ? dispatch(editProduct({ id: currentEditedId, formData })).then(
+          (data) => {
+            console.log(data, "edit");
 
-      if(data?payload?success){
-        dispatch(fetchAllProducts())
-        setFormData(initialFormData)
-        setOpenCreateProductDialog(false)
-        setCurrentEditedId(null)
-      }
-    })
+            if (data?.payload?.success) {
+              dispatch(fetchAllProducts());
+              setFormData(initialFormData);
+              setOpenCreateProductDialog(false);
+              setCurrentEditedId(null);
+            }
+          }
+        )
+      : dispatch(
+          addNewProduct({
+            ...formData,
+            image: uploadedImageUrl,
+          })
+        ).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllProducts());
+            setOpenCreateProductDialog(false);
+            setImageFile(null);
+            setFormData(initialFormData);
+            toast({
+              title: "Product added successfully",
+            });
+          }
+        });
+  }
 
-    : dispatch(
-      addNewProduct({
-        ...formData,
-        image: uploadedImageUrl,
-      })
-    ).then((data) => {
-      console.log(data);
+  function handleDelete(getCurrentProductId){
+    dispatch(deleteProduct(getCurrentProductId)).then((data) => {
       if (data?.payload?.success) {
         dispatch(fetchAllProducts());
-        setOpenCreateProductDialog(false);
-        setImageFile(null);
-        setFormData(initialFormData);
-        toast({
-          title: "Product added successfully",
-        });
       }
     });
   }
+
+  function isFormValid() {
+    return Object.keys(formData)
+      .map((key) => formData[key] !== "")
+      .every((item) => item);
+  }
+
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
 
-  // console.log(productList, uploadedImageUrl, "productList");
 
   return (
     <Fragment>
@@ -90,6 +109,7 @@ function AdminProduct() {
                 setOpenCreateProductDialog={setOpenCreateProductDialog}
                 setCurrentEditedId={setCurrentEditedId}
                 product={productItem}
+                handleDelete={handleDelete}
               />
             ))
           : null}
@@ -97,7 +117,8 @@ function AdminProduct() {
 
       <Sheet
         open={openCreateProductDialog}
-        onOpenChange={() => {setOpenCreateProductDialog(false);
+        onOpenChange={() => {
+          setOpenCreateProductDialog(false);
           setCurrentEditedId(null);
           setFormData(initialFormData);
         }}
@@ -105,10 +126,8 @@ function AdminProduct() {
         <SheetContent side="right" className="overflow-auto">
           <SheetHeader>
             <SheetTitle>
-              {
-               currentEditedId !==null ? "Edit Product " : 'Add new Product'
-              }
-              </SheetTitle>
+              {currentEditedId !== null ? "Edit Product " : "Add new Product"}
+            </SheetTitle>
             <p className="text-sm text-gray-500" id="dialog-description">
               Please fill out the form below to add a new product to the
               inventory.
@@ -128,8 +147,9 @@ function AdminProduct() {
               onSubmit={onSubmit}
               formData={formData}
               setFormData={setFormData}
-              buttonText={currentEditedId!==null ? 'Edit' : "Add"}
+              buttonText={currentEditedId !== null ? "Edit" : "Add"}
               formControls={addProductFormElements}
+              isBtnDisabled={!isFormValid()}
             />
           </div>
         </SheetContent>
