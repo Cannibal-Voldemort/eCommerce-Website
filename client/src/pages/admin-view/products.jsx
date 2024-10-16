@@ -15,7 +15,7 @@ import {
   deleteProduct,
   editProduct,
   fetchAllProducts,
-} from "@/store/products-slice";
+} from "@/store/admin-products-slice";
 import { useToast } from "@/hooks/use-toast";
 import AdminProductTile from "@/components/admin/product-tile";
 
