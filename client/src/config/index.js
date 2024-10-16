@@ -21,6 +21,7 @@ export const signupFormControls = [
     type: "password",
   },
 ];
+
 export const loginFormControls = [
   {
     name: "email",
@@ -37,30 +38,31 @@ export const loginFormControls = [
     type: "password",
   },
 ];
+
 export const addProductFormElements = [
   {
     label: "Title",
     name: "title",
     componentType: "input",
     type: "text",
-    placeholder: "Enter Product title"
+    placeholder: "Enter Product title",
   },
   {
     label: "Description",
     name: "description",
     componentType: "textarea",
-    placeholder: "Enter Product description"
+    placeholder: "Enter Product description",
   },
   {
     label: "Category",
     name: "category",
     componentType: "select",
     options: [
-      { id: 'men', label: 'Men' },
-      { id: 'women', label: 'Women' },
-      { id: 'kids', label: 'Kids' },
-      { id: 'accessories', label: 'Accessories' },
-      { id: 'footwear', label: 'Footwear' }
+      { id: "men", label: "Men" },
+      { id: "women", label: "Women" },
+      { id: "kids", label: "Kids" },
+      { id: "accessories", label: "Accessories" },
+      { id: "footwear", label: "Footwear" },
     ],
   },
   {
@@ -68,12 +70,12 @@ export const addProductFormElements = [
     name: "brand",
     componentType: "select",
     options: [
-      { id: 'nike', label: 'Nike' },
-      { id: 'adidas', label: 'Adidas' },
-      { id: 'puma', label: 'Puma' },
-      { id: 'zara', label: 'Zara' },
-      { id: 'h&m', label: 'H&M' },
-      { id: 'levi', label: 'Levi' }
+      { id: "nike", label: "Nike" },
+      { id: "adidas", label: "Adidas" },
+      { id: "puma", label: "Puma" },
+      { id: "zara", label: "Zara" },
+      { id: "h&m", label: "H&M" },
+      { id: "levi", label: "Levi" },
     ],
   },
   {
@@ -81,20 +83,77 @@ export const addProductFormElements = [
     name: "price",
     componentType: "input",
     type: "number",
-    placeholder: "Enter Product price"
+    placeholder: "Enter Product price",
   },
   {
     label: "Sale Price",
     name: "salePrice",
     componentType: "input",
     type: "number",
-    placeholder: "Enter Sale Price (optional)"
+    placeholder: "Enter Sale Price (optional)",
   },
   {
     label: "Total Stock",
     name: "totalStock",
     componentType: "input",
     type: "number",
-    placeholder: "Enter total Stock"
+    placeholder: "Enter total Stock",
   },
+];
+
+export const shoppingViewHeaderMenuItems = [
+  {
+    id: "home",
+    label: "Home",
+    path: "/shop/home",
+  },
+  {
+    id: "men",
+    label: "Men",
+    path: "/shop/items",
+  },
+  {
+    id: "women",
+    label: "Women",
+    path: "/shop/items",
+  },
+  {
+    id: "kids",
+    label: "Kids",
+    path: "/shop/items",
+  },
+  {
+    id: "accessories",
+    label: "Accessories",
+    path: "/shop/items",
+  },
+  {
+    id: "footwear",
+    label: "Footwear",
+    path: "/shop/items",
+  },
+];
+
+export const filterOptions = {
+  category: [
+    { id: "men", label: "Men" },
+    { id: "women", label: "Women" },
+    { id: "kids", label: "Kids" },
+    { id: "accessories", label: "Accessories" },
+    { id: "footwear", label: "Footwear" },
+  ],
+  brand: [
+    { id: "nike", label: "Nike" },
+    { id: "addidas", label: "Addidas" },
+    { id: "puma", label: "Puma" },
+    { id: "levi", label: "Levi" },
+    { id: "h&m", label: "H&M" },
+  ],
+};
+
+export const sortOptions = [
+  { id: "price-lowtohigh", label: "Price: Low to high" },
+  { id: "price-hightolow", label: "Price : High to Low" },
+  { id: "title-atoz", label: "Title: A to Z" },
+  { id: "title-ztoa", label: "Title: Z to A" },
 ];
