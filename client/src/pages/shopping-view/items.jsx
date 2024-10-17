@@ -11,12 +11,31 @@ import {
 import { sortOptions } from "@/config";
 import { fetchAllFilteredProducts } from "@/store/shop/product-slice";
 import { ArrowUpDownIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function ItemsListing() {
   const dispatch = useDispatch();
   const { productList } = useSelector((state) => state.shopProducts);
+  const [filters, setFilters] = useState({});
+  const [sort, setSort] = useState(null);
+
+  function handleSort() {
+    console.log();
+    setSort(value)
+  }
+
+  function handleFilter(getSectionId, getCurrentOption){
+       let cpyFilters = { ...filters};
+       const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId)
+       if(indexOfCurrentSection === -1){
+        cpyFilters = {
+          ...cpyFilters,
+          [getSectionId]:[getCurrentOption]
+        }
+       }
+       console.log(cpyFilters)
+  }
 
   useEffect(() => {
     dispatch(fetchAllFilteredProducts());
@@ -24,7 +43,7 @@ function ItemsListing() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
-      <ProductFilter />
+      <ProductFilter filter = {filters} handleFilter={handleFilter} />
       <div className="bg-background w-full rounded-lg shadow-sm">
         <div className="p-4 border-b flex items-center justify-between">
           <h2 className="font-extrabold text-lg ">All Products</h2>
@@ -42,9 +61,12 @@ function ItemsListing() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuRadioGroup>
+                <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
                   {sortOptions.map((sortItem) => (
-                    <DropdownMenuRadioItem key={sortItem.id}>
+                    <DropdownMenuRadioItem
+                      value={sortItem.id}
+                      key={sortItem.id}
+                    >
                       {sortItem.label}
                     </DropdownMenuRadioItem>
                   ))}
