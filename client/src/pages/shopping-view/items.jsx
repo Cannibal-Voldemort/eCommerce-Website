@@ -16,21 +16,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useSearchParams } from "react-router-dom";
 
 // it passes the filters in url
-// function createSearchParamsHelper(filterParams) {
-//   const queryParams = [];
+function createSearchParamsHelper(filterParams) {
+  const queryParams = [];
 
-//   for (const [key, value] of Object.entries(filterParams)) {
-//     if (Array.isArray(value) && value.length > 0) {
-//       const paramValue = value.join(",");
+  for (const [key, value] of Object.entries(filterParams)) {
+    if (Array.isArray(value) && value.length > 0) {
+      const paramValue = value.join(",");
 
-//       queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
-//     }
-//   }
+      queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
+    }
+  }
 
-//   console.log(queryParams, "queryParams");
+  console.log(queryParams, "queryParams");
 
-//   return queryParams.join("&");
-// }
+  return queryParams.join("&");
+}
 
 function ItemsListing() {
   const dispatch = useDispatch();
@@ -67,9 +67,16 @@ function ItemsListing() {
     }
     setFilters(cpyFilters);
     // filter is stored in session
-    sessionStorage.removeItem("filters");
-
+    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   }
+  // for inserting query in search
+  useEffect(()=>{
+    if(filters && Object.entries(filters).length > 0 ){
+      const createQueryString = createSearchParamsHelper(filters)
+      setSearchParams(new URLSearchParams(createQueryString))
+    }
+  },[filters])
+
 
   // when page renders it is default on that
   useEffect(() => {
@@ -80,8 +87,9 @@ function ItemsListing() {
   // for searchParams
 
   useEffect(() => {
-    dispatch(fetchAllFilteredProducts());
-  }, [dispatch]);
+    if(filters !==null && sort !==null)
+    dispatch(fetchAllFilteredProducts({filterParams: filters, sortParams: sort }));
+  }, [dispatch,sort, filters]);
 
   console.log(filters, "filters");
 
