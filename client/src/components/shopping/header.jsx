@@ -48,10 +48,12 @@ function HeaderRightContent() {
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
+      <Sheet>
       <Button variant="outline" size="icon">
         <ShoppingCart className="w-6 h-6" />
         <span className="sr-only">User Cart</span>
       </Button>
+      </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black">

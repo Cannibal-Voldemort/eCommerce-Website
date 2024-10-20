@@ -5,7 +5,7 @@ const { connectMongoDb } = require("./connection");
 const authRouter = require("./routes/auth/auth-route");
 const adminProductsRouter = require('./routes/admin/products-routes')
 const shopProductRouter = require('./routes/shop/products-routes')
-
+const shopCartRouter = require('./routes/shop/cart-routes')
 
 
 connectMongoDb(
@@ -35,5 +35,6 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter)
 app.use('/api/shop/products', shopProductRouter)
+app.use('/api/shop/cart', shopCartRouter)
 
 app.listen(PORT, () => console.log(`Server started at PORT:${PORT}`));
