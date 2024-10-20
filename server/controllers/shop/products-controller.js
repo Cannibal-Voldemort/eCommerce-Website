@@ -41,12 +41,25 @@ const getFilteredProducts = async (req, res) => {
 
   const products = await Product.find(filters).sort(sort);
 
-  console.log(products);
-
   res.status(200).json({
     success: true,
     data: products,
   });
 };
 
-module.exports = { getFilteredProducts };
+const getProductDetails = async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+
+  if (!product)
+    return res.status(404).json({
+      success: false,
+      message: "Product not Found!",
+    });
+  res.status(200).json({
+    success: true,
+    data: product,
+  });
+};
+
+module.exports = { getFilteredProducts, getProductDetails };

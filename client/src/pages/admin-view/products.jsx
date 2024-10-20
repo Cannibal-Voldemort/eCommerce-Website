@@ -36,7 +36,7 @@ function AdminProduct() {
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
-  const [currentEditedId, setCurrentEditedId] = useState(false);
+  const [currentEditedId, setCurrentEditedId] = useState(null)
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
   const { toast } = useToast();
@@ -44,38 +44,38 @@ function AdminProduct() {
   function onSubmit(event) {
     event.preventDefault();
 
-    currentEditedId !== null
-      ? dispatch(editProduct({ id: currentEditedId, formData })).then(
-          (data) => {
-            console.log(data, "edit");
+    if (currentEditedId != null) {
+      dispatch(editProduct({ id: currentEditedId, formData })).then((data) => {
+        console.log(data, "edit");
 
-            if (data?.payload?.success) {
-              dispatch(fetchAllProducts());
-              setFormData(initialFormData);
-              setOpenCreateProductDialog(false);
-              setCurrentEditedId(null);
-            }
-          }
-        )
-      : dispatch(
-          addNewProduct({
-            ...formData,
-            image: uploadedImageUrl,
-          })
-        ).then((data) => {
-          if (data?.payload?.success) {
-            dispatch(fetchAllProducts());
-            setOpenCreateProductDialog(false);
-            setImageFile(null);
-            setFormData(initialFormData);
-            toast({
-              title: "Product added successfully",
-            });
-          }
-        });
+        if (data?.payload?.success) {
+          dispatch(fetchAllProducts());
+          setFormData(initialFormData);
+          setOpenCreateProductDialog(false);
+          setCurrentEditedId(null);
+        }
+      });
+    } else {
+      dispatch(
+        addNewProduct({
+          ...formData,
+          image: uploadedImageUrl,
+        })
+      ).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchAllProducts());
+          setOpenCreateProductDialog(false);
+          setImageFile(null);
+          setFormData(initialFormData);
+          toast({
+            title: "Product added successfully",
+          });
+        }
+      });
+    }
   }
 
-  function handleDelete(getCurrentProductId){
+  function handleDelete(getCurrentProductId) {
     dispatch(deleteProduct(getCurrentProductId)).then((data) => {
       if (data?.payload?.success) {
         dispatch(fetchAllProducts());
@@ -93,13 +93,13 @@ function AdminProduct() {
     dispatch(fetchAllProducts());
   }, [dispatch]);
 
-
   return (
     <Fragment>
       <div className="mg-5 w-full flex justify-end">
-        <Button onClick={() => setOpenCreateProductDialog(true)}>
+        <Button onClick={() => {console.log( currentEditedId, 'fucku');setOpenCreateProductDialog(true)}}>
           Add New Product
         </Button>
+
       </div>
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
         {productList && productList.length > 0
