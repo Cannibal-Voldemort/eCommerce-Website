@@ -1,18 +1,42 @@
-import {Dialog, DialogContent} from '../../components/ui/dialog'
-import {Avatar, AvatarFallback} from '../../components/ui/avatar'
-import { StarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@radix-ui/react-dropdown-menu';
-
-
-function handleDialogClose(){
-    dispatchEvent(setProductDetails)
-}
+import { Dialog, DialogContent } from "../../components/ui/dialog";
+import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import { StarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { useToast } from "@/hooks/use-toast";
+import { setProductDetails } from "@/store/shop/product-slice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+
+  function handleAddToCart(getCurrentProductId) {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
+        toast({
+          title: "Product is added to cart",
+        });
+      }
+    });
+  }
+
+  function handleDialogClose(){
+    setOpen(false)
+    dispatch(setProductDetails())
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
         <div className="relative overflow-hidden rounded-lg">
           <img
@@ -55,7 +79,12 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             <span className="text-muted-foreground">(4.5)</span>
           </div>
           <div className="mt-5 mb-5">
-            <Button className="w-full">Add to Cart</Button>
+            <Button
+              onClick={() => handleAddToCart(productDetails._id)}
+              className="w-full"
+            >
+              Add to Cart
+            </Button>
           </div>
           <Separator />
           <div className="max-h-[300px] overflow-auto">
@@ -63,9 +92,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             <div className="grid gap-6">
               <div className="flex gap-4">
                 <Avatar className="w-10 h-10 border">
-                  <AvatarFallback>
-                   AS
-                  </AvatarFallback>
+                  <AvatarFallback>AS</AvatarFallback>
                 </Avatar>
                 <div className="grid gap-1">
                   <div className="flex items-center gap-2">

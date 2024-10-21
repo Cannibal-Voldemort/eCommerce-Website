@@ -20,6 +20,9 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
 import { logoutUser } from "@/store/auth-slice";
+import UserCartWrapper from "./cart-wrapper";
+import { useEffect, useState } from "react";
+import { fetchCartItems } from "@/store/shop/cart-slice";
 
 function MenuItem() {
   return (
@@ -39,20 +42,31 @@ function MenuItem() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state)=> state.shopCart)
+  const [openCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
-  const dispatch= useDispatch()
+  const dispatch = useDispatch();
 
   function handleLogout() {
-    dispatch(logoutUser())
+    dispatch(logoutUser());
   }
+
+  useEffect(()=>{
+    dispatch(fetchCartItems(user?.id))
+  }, [dispatch])
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
-      <Sheet>
-      <Button variant="outline" size="icon">
-        <ShoppingCart className="w-6 h-6" />
-        <span className="sr-only">User Cart</span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          onClick={() => setOpenCartSheet(true)}
+          variant="outline"
+          size="icon"
+        >
+          <ShoppingCart className="w-6 h-6" />
+          <span className="sr-only">User Cart</span>
+        </Button>
+        <UserCartWrapper cartItems={cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
       </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -64,7 +78,7 @@ function HeaderRightContent() {
         </DropdownMenuTrigger>
         <DropdownMenuContent side="right" className="w-56 ">
           <DropdownMenuLabel> Logged in as {user.userName} </DropdownMenuLabel>
-         <DropdownMenuSeparator/>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/shop/account")}>
             <UserRoundMinus className="mr-2 h-4 w-4" />
             Account
@@ -101,7 +115,7 @@ function ShoppingHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="max-w-xs w-full">
             <MenuItem />
-            <HeaderRightContent/>
+            <HeaderRightContent />
           </SheetContent>
         </Sheet>
         <div className="hidden lg:block">

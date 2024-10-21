@@ -9,12 +9,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { fetchAllFilteredProducts, fetchProductDetails } from "@/store/shop/product-slice";
+import {
+  fetchAllFilteredProducts,
+  fetchProductDetails,
+} from "@/store/shop/product-slice";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "./product-details";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { useToast } from "@/hooks/use-toast";
 
 // it passes the filters in url
 function createSearchParamsHelper(filterParams) {
@@ -35,11 +40,15 @@ function createSearchParamsHelper(filterParams) {
 
 function ItemsListing() {
   const dispatch = useDispatch();
-  const { productList, productDetails } = useSelector((state) => state.shopProducts);
+  const { productList, productDetails } = useSelector(
+    (state) => state.shopProducts
+  );
   const [filters, setFilters] = useState({});
+  const { user } = useSelector((state) => state.auth);
+  const { toast } = useToast();
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const[openDetailsDialog, setOpenDetailsDialog] = useState(false)
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 
   const categorySearchParam = searchParams.get("category");
 
@@ -72,19 +81,35 @@ function ItemsListing() {
     sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   }
 
-  function handleGetProductDetails(getCurrentProductId){
-    console.log(getCurrentProductId)
-    dispatch(fetchProductDetails(getCurrentProductId))
+  function handleGetProductDetails(getCurrentProductId) {
+    console.log(getCurrentProductId);
+    dispatch(fetchProductDetails(getCurrentProductId));
+  }
+
+  function handleAddToCart(getCurrentProductId) {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
+        toast({
+          title: "Product is added to cart",
+        });
+      }
+    });
   }
 
   // for inserting query in search
-  useEffect(()=>{
-    if(filters && Object.entries(filters).length > 0 ){
-      const createQueryString = createSearchParamsHelper(filters)
-      setSearchParams(new URLSearchParams(createQueryString))
+  useEffect(() => {
+    if (filters && Object.entries(filters).length > 0) {
+      const createQueryString = createSearchParamsHelper(filters);
+      setSearchParams(new URLSearchParams(createQueryString));
     }
-  },[filters])
-
+  }, [filters]);
 
   // when page renders it is default on that
   useEffect(() => {
@@ -95,17 +120,16 @@ function ItemsListing() {
   // for searchParams
 
   useEffect(() => {
-    if(filters !==null && sort !==null)
-    dispatch(fetchAllFilteredProducts({filterParams: filters, sortParams: sort }));
-  }, [dispatch,sort, filters]);
+    if (filters !== null && sort !== null)
+      dispatch(
+        fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
+      );
+  }, [dispatch, sort, filters]);
 
-// for ProductDetails rendering after clicking
-   useEffect(()=>{
-       if(productDetails !== null) setOpenDetailsDialog(true)
-   },[productDetails])
-
-
-  console.log(productDetails, 'productDetails');
+  // for ProductDetails rendering after clicking
+  useEffect(() => {
+    if (productDetails !== null) setOpenDetailsDialog(true);
+  }, [productDetails]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
@@ -144,12 +168,20 @@ function ItemsListing() {
         <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
-                <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem} />
+                <ShoppingProductTile
+                  handleGetProductDetails={handleGetProductDetails}
+                  product={productItem}
+                  handleAddToCart={handleAddToCart}
+                />
               ))
             : null}
         </div>
       </div>
-      <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails}/>
+      <ProductDetailsDialog
+        open={openDetailsDialog}
+        setOpen={setOpenDetailsDialog}
+        productDetails={productDetails}
+      />
     </div>
   );
 }
