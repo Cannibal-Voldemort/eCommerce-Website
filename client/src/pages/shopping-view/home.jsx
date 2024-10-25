@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
+import ShoppingProductTile from "@/components/shopping/product-tile";
+import { handler } from "tailwindcss-animate";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -98,6 +100,18 @@ function ShoppingHome() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">Feature Product </h2>
+          <div className="grid">
+            {
+              productList && productList.length > 0 ?
+              productList.map(productItem=>
+              <ShoppingProductTile
+                handleGetProductDetails={handleGetProductDetails}
+                product={productItem}
+                handleAddToCart={handleAddToCart}
+                />
+              )
+            }
+          </div>
         </div>
       </section>
     </div>
