@@ -24,12 +24,9 @@ const categoriesWithIcon = [
   { id: "footwear", label: "Footwear", icon: UmbrellaIcon },
 ];
 
-
 function ShoppingHome() {
-
   const [currentSlide, setCurrentSlide] = useState(0);
 
- 
   const slides = [bannerOne, bannerTwo, bannerThree];
 
   useEffect(() => {
@@ -56,7 +53,9 @@ function ShoppingHome() {
           variant="outline"
           size="icon"
           onClick={() =>
-            setCurrentSlide((prevSlide) => (prevSlide - 1 + slides.length) % slides.length)
+            setCurrentSlide(
+              (prevSlide) => (prevSlide - 1 + slides.length) % slides.length
+            )
           }
           className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/80"
         >
@@ -77,11 +76,13 @@ function ShoppingHome() {
       {/* Categories Section */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Special Offers</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Special Offers
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {categoriesWithIcon.map((categoryItem) => {
               const IconComponent = categoryItem.icon; // Using the icon component bcz it collapse while not used bcz it treats that as a jsx component
-  
+
               return (
                 <Card
                   key={categoryItem.id}
@@ -99,19 +100,9 @@ function ShoppingHome() {
       </section>
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Feature Product </h2>
-          <div className="grid">
-            {
-              productList && productList.length > 0 ?
-              productList.map(productItem=>
-              <ShoppingProductTile
-                handleGetProductDetails={handleGetProductDetails}
-                product={productItem}
-                handleAddToCart={handleAddToCart}
-                />
-              )
-            }
-          </div>
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Feature Product{" "}
+          </h2>
         </div>
       </section>
     </div>
@@ -119,4 +110,3 @@ function ShoppingHome() {
 }
 
 export default ShoppingHome;
-
