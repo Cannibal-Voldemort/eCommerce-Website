@@ -3,18 +3,25 @@ import bannerOne from "../../assets/banner-1.jpg";
 import bannerTwo from "../../assets/banner-2.jpg";
 import bannerThree from "../../assets/banner-3.jpg";
 import {
+  AirVent,
   BabyIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CloudLightningIcon,
+  Heater,
+  Image,
+  Shirt,
   ShirtIcon,
+  ShoppingBag,
+  Shovel,
   UmbrellaIcon,
   WatchIcon,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import ShoppingProductTile from "@/components/shopping/product-tile";
-import { handler } from "tailwindcss-animate";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllFilteredProducts } from "@/store/shop/product-slice";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -24,8 +31,19 @@ const categoriesWithIcon = [
   { id: "footwear", label: "Footwear", icon: UmbrellaIcon },
 ];
 
+  const brandWithIcon= [
+  { id: "nike", label: "Nike" , icon: Shirt},
+  { id: "addidas", label: "Addidas" , icon: Shovel},
+  { id: "puma", label: "Puma" , icon: AirVent},
+  { id: "levi", label: "Levi's", icon: Image },
+  { id: "zara", label: "Zara" , icon: Heater},
+  { id: "h&m", label: "H&M", icon: ShoppingBag },
+]
+
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const {productList} = useSelector(state=>state.shopProducts)
+  const dispatch = useDispatch()
 
   const slides = [bannerOne, bannerTwo, bannerThree];
 
@@ -35,6 +53,10 @@ function ShoppingHome() {
     }, 5000);
     return () => clearInterval(timer);
   }, [slides.length]);
+
+  useEffect(()=>{
+    dispatch(fetchAllFilteredProducts({filterParams: {}, sortParams: 'price-lowtohigh'}))
+  },[dispatch])
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -98,11 +120,44 @@ function ShoppingHome() {
           </div>
         </div>
       </section>
+
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Feautured Brand
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {brandWithIcon.map((brandItem) => {
+              const IconComponent = brandItem.icon; // Using the icon component bcz it collapse while not used bcz it treats that as a jsx component
+
+              return (
+                <Card
+                  key={brandItem.id}
+                  className="cursor-pointer hover:shadow-lg transition-shadow"
+                >
+                  <CardContent className="flex flex-col items-center justify-center p-6">
+                    <IconComponent className="w-12 h-12 mb-4 text-primary" />
+                    <span className="font-bold">{brandItem.label}</span>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">
-            Feature Product{" "}
+            Feature Product
           </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {productList && productList.length > 0
+              ? productList.map((productItem) => (
+                  <ShoppingProductTile product={productItem} />
+                ))
+              : null}
+          </div>
         </div>
       </section>
     </div>
