@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import ShoppingProductTile from "@/components/shopping/product-tile";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllFilteredProducts } from "@/store/shop/product-slice";
+import { useNavigate } from "react-router-dom";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -31,21 +32,31 @@ const categoriesWithIcon = [
   { id: "footwear", label: "Footwear", icon: UmbrellaIcon },
 ];
 
-  const brandWithIcon= [
-  { id: "nike", label: "Nike" , icon: Shirt},
-  { id: "addidas", label: "Addidas" , icon: Shovel},
-  { id: "puma", label: "Puma" , icon: AirVent},
+const brandWithIcon = [
+  { id: "nike", label: "Nike", icon: Shirt },
+  { id: "addidas", label: "Addidas", icon: Shovel },
+  { id: "puma", label: "Puma", icon: AirVent },
   { id: "levi", label: "Levi's", icon: Image },
-  { id: "zara", label: "Zara" , icon: Heater},
+  { id: "zara", label: "Zara", icon: Heater },
   { id: "h&m", label: "H&M", icon: ShoppingBag },
-]
+];
 
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const {productList} = useSelector(state=>state.shopProducts)
-  const dispatch = useDispatch()
+  const { productList } = useSelector((state) => state.shopProducts);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const slides = [bannerOne, bannerTwo, bannerThree];
+
+  function handleNavigateToItemsPage(getCurrentItem, section) {
+    sessionStorage.removeItem("filters");
+    const currentFilter = {
+      [section]: [getCurrentItem.id],
+    };
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+    navigate(`/shop/items`);
+  }
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -54,9 +65,14 @@ function ShoppingHome() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  useEffect(()=>{
-    dispatch(fetchAllFilteredProducts({filterParams: {}, sortParams: 'price-lowtohigh'}))
-  },[dispatch])
+  useEffect(() => {
+    dispatch(
+      fetchAllFilteredProducts({
+        filterParams: {},
+        sortParams: "price-lowtohigh",
+      })
+    );
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -107,6 +123,9 @@ function ShoppingHome() {
 
               return (
                 <Card
+                  onClick={() =>
+                    handleNavigateToItemsPage(categoryItem, "category")
+                  }
                   key={categoryItem.id}
                   className="cursor-pointer hover:shadow-lg transition-shadow"
                 >
@@ -131,7 +150,9 @@ function ShoppingHome() {
               const IconComponent = brandItem.icon; // Using the icon component bcz it collapse while not used bcz it treats that as a jsx component
 
               return (
-                <Card
+                <Card onClick={() =>
+                  handleNavigateToItemsPage(brandItem, "brand")
+                }
                   key={brandItem.id}
                   className="cursor-pointer hover:shadow-lg transition-shadow"
                 >
