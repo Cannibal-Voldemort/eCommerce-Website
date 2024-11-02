@@ -21,8 +21,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import ShoppingProductTile from "@/components/shopping/product-tile";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllFilteredProducts } from "@/store/shop/product-slice";
+import {
+  fetchAllFilteredProducts,
+  fetchProductDetails,
+} from "@/store/shop/product-slice";
 import { useNavigate } from "react-router-dom";
+import ProductDetailsDialog from "./product-details";
+import { useToast } from "@/hooks/use-toast";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -43,9 +49,14 @@ const brandWithIcon = [
 
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { productList } = useSelector((state) => state.shopProducts);
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const { productList, productDetails } = useSelector(
+    (state) => state.shopProducts
+  );
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {toast} = useToast();
 
   const slides = [bannerOne, bannerTwo, bannerThree];
 
@@ -56,6 +67,27 @@ function ShoppingHome() {
     };
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));
     navigate(`/shop/items`);
+  }
+
+  function handleGetProductDetails(getCurrentProductId) {
+    dispatch(fetchProductDetails(getCurrentProductId));
+  }
+
+  function handleAddToCart(getCurrentProductId) {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
+        toast({
+          title: "Product is added to cart",
+        });
+      }
+    });
   }
 
   useEffect(() => {
@@ -73,6 +105,10 @@ function ShoppingHome() {
       })
     );
   }, [dispatch]);
+
+  useEffect(() => {
+    if (productDetails !== null) setOpenDetailsDialog(true);
+  }, [productDetails]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -150,9 +186,8 @@ function ShoppingHome() {
               const IconComponent = brandItem.icon; // Using the icon component bcz it collapse while not used bcz it treats that as a jsx component
 
               return (
-                <Card onClick={() =>
-                  handleNavigateToItemsPage(brandItem, "brand")
-                }
+                <Card
+                  onClick={() => handleNavigateToItemsPage(brandItem, "brand")}
                   key={brandItem.id}
                   className="cursor-pointer hover:shadow-lg transition-shadow"
                 >
@@ -175,12 +210,21 @@ function ShoppingHome() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {productList && productList.length > 0
               ? productList.map((productItem) => (
-                  <ShoppingProductTile product={productItem} />
+                  <ShoppingProductTile
+                    handleGetProductDetails={handleGetProductDetails}
+                    product={productItem}
+                    handleAddToCart={handleAddToCart}
+                  />
                 ))
               : null}
           </div>
         </div>
       </section>
+      <ProductDetailsDialog
+        open={openDetailsDialog}
+        setOpen={setOpenDetailsDialog}
+        productDetails={productDetails}
+      />
     </div>
   );
 }
