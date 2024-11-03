@@ -19,6 +19,7 @@ const addAddress = async (req, res) => {
     notes,
     phone,
   });
+  
   await newlyCreatedAddress.save();
 
   res.status(201).json({
@@ -37,6 +38,7 @@ const fetchAllAddress = async (req, res) => {
   }
 
   const addressList = await Address.find({ userId });
+
   res.status(200).json({
     success: true,
     data: addressList,
