@@ -26,7 +26,7 @@ import {
   fetchProductDetails,
 } from "@/store/shop/product-slice";
 import { useNavigate } from "react-router-dom";
-import ProductDetailsDialog from "./product-details";
+import ProductDetailsDialog from "../../components/shopping/product-details";
 import { useToast } from "@/hooks/use-toast";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 

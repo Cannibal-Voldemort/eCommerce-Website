@@ -17,6 +17,7 @@ import CheckAuth from "./components/common/check-auth";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth } from "./store/auth-slice";
+import PaypalRetunPage from "./pages/shopping-view/paypal-return";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -69,6 +70,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="home" element={<ShoppingHome />} />
           <Route path="items" element={<ItemsListing />} />
+          <Route path = 'paypal-return' element={<PaypalRetunPage/>}/>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

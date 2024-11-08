@@ -3,9 +3,9 @@ const paypal = require("paypal-rest-sdk");
 paypal.configure({
   mode: "sandbox",
   client_id:
-    "ASTx1zE7y3zG_teF_NPianQeaH5aDMW8LBtkUjHitcbV-5n_oLn_m0BeYiOPKMh1SBYhnzd2srx42QEW",
+    "AdsEuPR44aFHUB9q3kJYLJZRSPL5QhoDQaJrw9JiOGiFAZ1dorUuW63i-bzkahqG86lsDcq1rEmiDR-Y",
   client_secret:
-    "EHyt6Js4OAqtpb6L9s73ACOielUIGMVONKQK50XMvmvLTutoFqBvI-orU0YzINfVypdkrI9tZqqRvMii",
+    "EBTERw-vALXHLWnQfIYg0llTbd2pYP0dCWchxgxT17W8bLOxIsh1kD7Qvuxb0O3NAmP8PtIyxCi9yiiw",
 });
 
 module.exports = paypal

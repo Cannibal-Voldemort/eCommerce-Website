@@ -1,5 +1,5 @@
-import { Dialog, DialogContent } from "../../components/ui/dialog";
-import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import { Dialog, DialogContent } from "../ui/dialog";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { StarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@radix-ui/react-dropdown-menu";
